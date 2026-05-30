@@ -1,0 +1,92 @@
+Table Comic {
+  id integer PK 
+  name varchar
+  cover_image_url varchar
+  description varchar
+  chapter_count float
+  rating float
+  review_count float
+}
+
+Table Review {
+  id integer PK
+  comic_id integer PK // Foreign Key
+  user_name varchar
+  review varchar
+}
+
+Table Tag {
+  id integer PK
+  name varchar
+}
+
+Table Genre {
+  id integer PK
+  name varchar
+}
+
+Table Source {
+  id integer PK
+  name varchar
+}
+
+Table Comment {
+  id integer PK
+  chapter_id integer PK // Foreign Key
+  comment varchar
+}
+
+Table Chapter {
+  id integer PK
+  junction_id integer PK
+  chapter_number float
+}
+
+Table Page {
+  id integer PK
+  chapter_id integer
+  page_url varchar
+}
+
+Table Comic_Source {
+  junction_id integer PK
+  comic_id integer PK // Foreign Key
+  source_id integer PK // Foreign Key
+  subscribed boolean
+  chapter_count float
+}
+
+Table Comic_Tag {
+  comic_id integer PK
+  tag_id integer PK
+}
+
+Table Comic_Genre {
+  comic_id integer PK
+  genre_id integer PK
+}
+
+// Comic to Source Junction
+ref: Comic.id < Comic_Source.comic_id
+ref: Comic_Source.source_id > Source.id
+
+// Comic To Tag Junction
+ref: Comic.id < Comic_Tag.comic_id
+ref: Comic_Tag.tag_id > Tag.id
+
+// Comic To Genre Junction
+ref: Comic.id < Comic_Genre.comic_id
+ref: Comic_Genre.genre_id > Genre.id
+
+// Source Chapter Page Relationship
+ref: Chapter.junction_id > Comic_Source.junction_id
+ref: Page.chapter_id > Chapter.id
+
+// Review Comic Relationship
+ref: Review.comic_id > Comic.id
+
+// Comment Chapter Relationship
+ref: Comment.chapter_id > Chapter.id
+
+
+//POSITION({"Comic":{"x":-112,"y":-47,"w":230},"Source":{"x":519,"y":-14,"w":230},"Comic_Source":{"x":224,"y":-78,"w":230},"Comic_Tag":{"x":222,"y":144,"w":230},"Page":{"x":221.00000000000006,"y":-232,"w":230},"Tag":{"x":516.0000089645378,"y":133.99999198913645,"w":230},"Review":{"x":-435.9999269485542,"y":-78.99998769760245,"w":230},"Chapter":{"x":527.0000079154961,"y":-199.9999561309856,"w":230},"Comment":{"x":809.9999542236369,"y":-231.99995307922808,"w":230},"Genre":{"x":520.8000044898987,"y":299.60000037765496,"w":230},"Comic_Genre":{"x":222.20003289793905,"y":302.7001151427871,"w":230}})
