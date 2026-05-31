@@ -1,4 +1,5 @@
 import json
+import time
 
 from requests import get
 from bs4 import BeautifulSoup
@@ -41,11 +42,10 @@ class MangaBall(Scraper):
 
     def get_all_comics(self) -> list[Comic]:
         comics = []
-        url = f"{self.base_url}/api/v1/title/search-advanced/"
-        payload = {'filters[page]': 1}
 
-        response = self.session.post(url, headers=self.api_headers, data=payload)
-        data = response.json()
+        url = f"{self.base_url}/api/v1/title/search-advanced/"
+        payload = {'filters[page]': 0, "filters[limit]": 100}
+        data = {'pagination': {'current_page': 0, 'last_page': 1}}
 
         while data['pagination']['current_page'] != data['pagination']['last_page']:
             payload['filters[page]'] += 1
@@ -54,7 +54,19 @@ class MangaBall(Scraper):
             if response.status_code in (403, 419) or "csrf" in response.text.lower():
                 self._refresh_csrf()
                 response = self.session.post(url, headers=self.api_headers, data=payload)
+            if response.status_code == 429:
+                retry_after = int(response.headers.get("Retry-After", 60))
+                time.sleep(retry_after + 5)
+                response = self.session.post(url, headers=self.api_headers, data=payload)
+
+            data = response.json()
 
 
     def get_comic(self, title: str) -> Comic:
         pass
+
+
+''' TESTING '''
+if __name__ == "__main__":
+    scraper = MangaBall("mangaball.net")
+    scraper.get_all_comics()

@@ -7,6 +7,8 @@ from Comic import Comic
 class Scraper(ABC):
     def __init__(self, base_url):
         self.base_url = "https://" + base_url
+
+        self.name = "Parent Scraper"
         self.session = Session()
 
     @abstractmethod
