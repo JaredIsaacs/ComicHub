@@ -2,17 +2,27 @@ Table Comic {
   id integer PK 
   name varchar
   cover_image_url varchar
+  status varchar
   description varchar
   chapter_count float
   rating float
   review_count float
+  date_added datetime
+  last_updated datetime
+  year_published varchar
+}
+
+Table AltName {
+  id integer PK
+  comic_id integer PK // Foreign Key
+  alt_name varchar
 }
 
 Table Review {
   id integer PK
   comic_id integer PK // Foreign Key
   user_name varchar
-  review varchar
+  review_text varchar
 }
 
 Table Tag {
@@ -28,17 +38,19 @@ Table Genre {
 Table Source {
   id integer PK
   name varchar
+  base_url varchar
 }
 
 Table Comment {
   id integer PK
   chapter_id integer PK // Foreign Key
+  user_name varchar
   comment varchar
 }
 
 Table Chapter {
   id integer PK
-  junction_id integer PK
+  comic_source_id integer PK
   chapter_number float
 }
 
@@ -49,11 +61,15 @@ Table Page {
 }
 
 Table Comic_Source {
-  junction_id integer PK
+  id integer PK
   comic_id integer PK // Foreign Key
   source_id integer PK // Foreign Key
   subscribed boolean
   chapter_count float
+  status varchar
+  slug varchar
+  date_added datetime
+  last_updated datetime
 }
 
 Table Comic_Tag {
@@ -79,7 +95,7 @@ ref: Comic.id < Comic_Genre.comic_id
 ref: Comic_Genre.genre_id > Genre.id
 
 // Source Chapter Page Relationship
-ref: Chapter.junction_id > Comic_Source.junction_id
+ref: Chapter.comic_source_id > Comic_Source.id
 ref: Page.chapter_id > Chapter.id
 
 // Review Comic Relationship
@@ -88,5 +104,8 @@ ref: Review.comic_id > Comic.id
 // Comment Chapter Relationship
 ref: Comment.chapter_id > Chapter.id
 
+// Alt Name Comic Relationship
+ref: AltName.comic_id > Comic.id
 
-//POSITION({"Comic":{"x":-112,"y":-47,"w":230},"Source":{"x":519,"y":-14,"w":230},"Comic_Source":{"x":224,"y":-78,"w":230},"Comic_Tag":{"x":222,"y":144,"w":230},"Page":{"x":221.00000000000006,"y":-232,"w":230},"Tag":{"x":516.0000089645378,"y":133.99999198913645,"w":230},"Review":{"x":-435.9999269485542,"y":-78.99998769760245,"w":230},"Chapter":{"x":527.0000079154961,"y":-199.9999561309856,"w":230},"Comment":{"x":809.9999542236369,"y":-231.99995307922808,"w":230},"Genre":{"x":520.8000044898987,"y":299.60000037765496,"w":230},"Comic_Genre":{"x":222.20003289793905,"y":302.7001151427871,"w":230}})
+
+//POSITION({"Comic":{"x":-495.7098964345271,"y":-349.2999242203856,"w":230},"AltName":{"x":-780.7193513547005,"y":-381.2439281106581,"w":230},"Review":{"x":-780.3624047586873,"y":-553.3422111423316,"w":230},"Tag":{"x":100.57799815755016,"y":-148.61693112235866,"w":230},"Genre":{"x":102.3990457977319,"y":28.40603835381546,"w":230},"Source":{"x":102.22358348595588,"y":-338.28441768751213,"w":230},"Comment":{"x":380.9041363812446,"y":-706.4217406540996,"w":230},"Page":{"x":380.0032355533216,"y":-534.1062711758524,"w":230},"Comic_Tag":{"x":-194.81320455831883,"y":-147.6156551955275,"w":230},"Comic_Genre":{"x":-194.7708633295765,"y":23.212110493349712,"w":230},"Comic_Source":{"x":-193.57295939583474,"y":-513.0667210959791,"w":230},"Chapter":{"x":104.5286733615684,"y":-529.9799746366808,"w":230}})

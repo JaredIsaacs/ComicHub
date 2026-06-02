@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 
 from requests import Session
 
-from Comic import Comic
+from src.scrapers.Comic import Comic
 
 class Scraper(ABC):
     def __init__(self, base_url):
         self.base_url = "https://" + base_url
 
-        self.name = "Parent Scraper"
+        self.name = "Base Scraper"
         self.session = Session()
 
     @abstractmethod

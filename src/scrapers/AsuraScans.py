@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
-from Scraper import Scraper
-from Comic import Comic
+from src.scrapers.Scraper import Scraper
+from src.scrapers.Comic import Comic
 
 class AsuraScans(Scraper):
     def __init__(self, base_url):
@@ -38,6 +38,9 @@ class AsuraScans(Scraper):
         return comics
     
     def get_comic(self, slug: str) -> Comic:
+        '''
+        Class used to gather comic details that are important for the Scraper table.
+        '''
         response = self.session.get(f"{self.base_url}/comics/{slug}")
         soup = BeautifulSoup(response.content, features="lxml")
 
