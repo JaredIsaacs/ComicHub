@@ -23,7 +23,7 @@ class Comic(DatabaseRow):
 
     
     @staticmethod
-    def get(cursor: Cursor, id: int = None, name: str = None):
+    def get(cursor: Cursor, id: int = None, name: str = None) -> Comic:
         if id is None and name is None:
             raise Exception("Both name and id cannot be None!")
         
@@ -39,6 +39,7 @@ class Comic(DatabaseRow):
                      data['rating'], data['review_count'], data['date_added'], data['last_updated'], data['year_published'],
                      data['id'])
     
+
     def create(self):
         self.cursor.execute(
                 "INSERT INTO Comic (name, cover_image_url, status, description," \
@@ -51,11 +52,16 @@ class Comic(DatabaseRow):
     
 
     def update(self):
-        return super().update()
+        self.cursor.execute("UPDATE Comic SET name = ?, cover_image_url = ?, status = ?, description = ?," \
+                            "chapter_count = ?, rating = ?, review_count = ?, date_added = ?, last_updated = ?," \
+                            "year_published = ?",
+                            (self.name, self.cover_image_url, self.status, self.description, self.chapter_count,
+                            self.rating, self.review_count, self.date_added, self.last_updated, self.year_published))
     
 
     def delete(self):
-        return super().delete()
+        self.cursor.execute("DELETE FROM Comic where id = ?",
+                            (self.id,))
 
 if __name__ == "__main__":
     from src.globals import DB_NAME
@@ -66,10 +72,11 @@ if __name__ == "__main__":
 
     con = sqlite3.connect(DB_NAME)
     con.row_factory = sqlite3.Row
-    
+
     cursor = con.cursor()
 
     comic = Comic.get(cursor, id=1)
+    comic.delete()
 
     con.commit()
     con.close()
