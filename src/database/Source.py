@@ -3,7 +3,8 @@ from sqlite3 import Cursor
 from src.database.DatabaseRow import DatabaseRow
 
 class Source(DatabaseRow):
-    def __init__(self, cursor: Cursor, name: str, base_url: str, id: int | None = None):
+    def __init__(self, cursor: Cursor, name: str, base_url: str, 
+                 id: int | None = None):
         super().__init__(cursor, id)
 
         self.name = name
@@ -11,7 +12,7 @@ class Source(DatabaseRow):
 
 
     @staticmethod
-    def get(cursor: Cursor, id = None, name = None):
+    def get(cursor: Cursor, id: int = None, name: str = None):
         if id is None and name is None:
             raise Exception("Both name and id cannot be None!")
         

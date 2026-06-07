@@ -53,6 +53,7 @@ def initialize_database():
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "comic_id INTEGER NOT NULL," \
                 "user_name TEXT DEFAULT 'N/A'," \
+                "rating REAL DEFAULT 0.0," \
                 "review_text TEXT NOT NULL," \
                 "FOREIGN KEY(comic_ID) REFERENCES Comic(id) ON DELETE CASCADE" \
             ");")

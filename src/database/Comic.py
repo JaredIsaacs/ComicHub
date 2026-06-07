@@ -40,6 +40,21 @@ class Comic(DatabaseRow):
                      data['id'])
     
 
+    @staticmethod
+    def search(cursor: Cursor, query: str) -> list[Comic]:
+        sql_query = f"SELECT * FROM Comic, LEFT JOIN AltName ON Comic.id = AltName.comic_id" \
+                    f"WHERE Comic.name LIKE ? OR AltName.alt_name LIKE ?"
+        response = cursor.execute(sql_query, (f"%{query}%", f"%{query}%"))
+
+        comics = []
+        for data in response.fetchall():
+            comics.append(Comic(cursor, data['name'], data['cover_image_url'], data['status'], data['description'], data['chapter_count'],
+                                data['rating'], data['review_count'], data['date_added'], data['last_updated'], data['year_published'],
+                                data['id']))
+        
+        return comics
+
+
     def create(self):
         self.cursor.execute(
                 "INSERT INTO Comic (name, cover_image_url, status, description," \
@@ -75,8 +90,8 @@ if __name__ == "__main__":
 
     cursor = con.cursor()
 
-    comic = Comic.get(cursor, id=1)
-    comic.delete()
+    comic = Comic(cursor, "Dragonslayer's Class Regression", "https://meo.comick.pictures/Z8Bb6v-s.jpg", "ongoing", "Zeke Draker was the first of House Draker to fail his Awakening. And for that, he was cast out. Forced to survive in a brutal world, Zeke rose from disgrace and earned the name Phantom of the North. On a mission to stop the emperor from obtaining an ancient relic, Zeke was hunted and killed by imperial forces. But fate had other plans. Zeke awakens as a 12-year-old boy back in the Cradle, House Draker’s elite training ground. Given a second chance, Zeke’s determined to rewrite his fate.", 87.0, 7.9, 1440, now_iso, now_iso, 2024)
+    comic.create()
 
     con.commit()
     con.close()
