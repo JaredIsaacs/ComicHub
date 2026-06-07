@@ -4,7 +4,7 @@ from src.database.DatabaseRow import DatabaseRow
 
 
 class Review(DatabaseRow):
-    def __init__(self, cursor: Cursor, comic_id: int, user_name: str, rating: float, review_text: str, id = None):
+    def __init__(self, cursor: Cursor, comic_id: int, user_name: str, rating: float, review_text: str, id: int | None):
         super().__init__(cursor, id)
 
         self.comic_id = comic_id
@@ -27,6 +27,7 @@ class Review(DatabaseRow):
                 "INSERT INTO Review (comic_id, user_name, rating, review_text) VALUES (?, ?, ?, ?)",
                 (self.comic_id, self.user_name, self.rating, self.review_text)
             )
+        self.id = self.cursor.lastrowid
         
 
     def update(self):

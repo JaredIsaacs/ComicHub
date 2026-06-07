@@ -4,7 +4,7 @@ from src.database.DatabaseRow import DatabaseRow
 
 
 class AltName(DatabaseRow):
-    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, id = None):
+    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, id: int | None):
         super().__init__(cursor, id)
 
         self.comic_id = comic_id
@@ -32,6 +32,7 @@ class AltName(DatabaseRow):
                 "INSERT INTO AltName (comic_id, alt_name) VALUES (?, ?)", 
                 (self.comic_id, self.alt_name)
             )
+        self.id = self.cursor.lastrowid
         
     
     def update(self):

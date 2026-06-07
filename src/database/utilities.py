@@ -68,6 +68,7 @@ def initialize_database():
     cursor.execute("CREATE TABLE IF NOT EXISTS Page (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "chapter_id INTEGER NOT NULL," \
+                "order INTEGER NOT NULL," \
                 "page_url TEXT NOT NULL," \
                 "FOREIGN KEY(chapter_ID) REFERENCES Chapter(id) ON DELETE CASCADE" \
             ");")

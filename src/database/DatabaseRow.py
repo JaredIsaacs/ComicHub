@@ -9,7 +9,7 @@ class DatabaseRow(ABC):
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int = None):
+    def get(cursor: Cursor, id: int | None):
         pass
 
 

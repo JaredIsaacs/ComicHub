@@ -4,7 +4,7 @@ from src.database.DatabaseRow import DatabaseRow
 
 class Source(DatabaseRow):
     def __init__(self, cursor: Cursor, name: str, base_url: str, 
-                 id: int | None = None):
+                 id: int | None):
         super().__init__(cursor, id)
 
         self.name = name
@@ -30,6 +30,7 @@ class Source(DatabaseRow):
     def create(self):
         self.cursor.execute(f"INSERT INTO Source (name, base_url) VALUES (?, ?)",
                             (self.name, self.base_url))
+        self.id = self.cursor.lastrowid
 
 
     def update(self):

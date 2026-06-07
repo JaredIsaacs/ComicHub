@@ -7,7 +7,7 @@ from src.database.DatabaseRow import DatabaseRow
 class Comic(DatabaseRow):
     def __init__(self, cursor: Cursor, name: str, cover_image_url: str, status: str,
                 description: str, chapter_count: float, rating: float, review_count:int,
-                date_added: datetime, last_updated: datetime, year_published: int,  id = None):
+                date_added: datetime, last_updated: datetime, year_published: int,  id : int | None):
         super().__init__(cursor, id)
 
         self.name = name
@@ -64,6 +64,7 @@ class Comic(DatabaseRow):
                 self.chapter_count, self.rating, self.review_count, self.date_added,
                 self.last_updated, self.year_published)
             )
+        self.id = self.cursor.lastrowid
     
 
     def update(self):

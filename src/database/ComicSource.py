@@ -59,6 +59,7 @@ class ComicSource(DatabaseRow):
             "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (self.comic_id, self.source_id, self.chapter_count, self.status, self.slug,
              self.date_added, self.last_updated))
+        self.id = self.cursor.lastrowid
     
 
     def update(self):
