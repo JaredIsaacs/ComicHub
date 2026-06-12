@@ -24,7 +24,7 @@ def initialize_database(cursor: sqlite3.Cursor | None = None):
                     "last_updated TEXT NOT NULL," \
                     "year_published INTEGER DEFAULT 0"
                 ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Source (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "name TEXT UNIQUE NOT NULL," \
@@ -45,14 +45,14 @@ def initialize_database(cursor: sqlite3.Cursor | None = None):
                 "FOREIGN KEY(comic_id) REFERENCES Comic(id) ON DELETE CASCADE," \
                 "FOREIGN KEY(source_id) REFERENCES Source(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS AltName (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "comic_id INTEGER NOT NULL," \
                 "alt_name TEXT NOT NULL," \
                 "FOREIGN KEY(comic_ID) REFERENCES Comic(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Review (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "comic_id INTEGER NOT NULL," \
@@ -63,14 +63,14 @@ def initialize_database(cursor: sqlite3.Cursor | None = None):
                 "updated_at TEXT NOT NULL," \
                 "FOREIGN KEY(comic_ID) REFERENCES Comic(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Chapter (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "comic_source_id INTEGER NOT NULL," \
                 "chapter_number REAL NOT NULL," \
                 "FOREIGN KEY(comic_source_id) REFERENCES Comic_Source(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Page (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "chapter_id INTEGER NOT NULL," \
@@ -78,7 +78,7 @@ def initialize_database(cursor: sqlite3.Cursor | None = None):
                 "page_url TEXT NOT NULL," \
                 "FOREIGN KEY(chapter_ID) REFERENCES Chapter(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Comment (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "chapter_id INTEGER NOT NULL," \
@@ -86,25 +86,25 @@ def initialize_database(cursor: sqlite3.Cursor | None = None):
                 "comment TEXT NOT NULL," \
                 "FOREIGN KEY(chapter_id) REFERENCES Chapter(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Tag (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "name TEXT UNIQUE NOT NULL" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Genre (" \
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," \
                 "name TEXT NOT NULL," \
                 "genre_group TEXT NOT NULL" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Comic_Genre (" \
                 "comic_id INTEGER NOT NULL," \
                 "genre_id INTEGER NOT NULL," \
                 "FOREIGN KEY(comic_id) REFERENCES Comic(id) ON DELETE CASCADE," \
                 "FOREIGN KEY(genre_id) REFERENCES Genre(id) ON DELETE CASCADE" \
             ");")
-    
+
     cursor.execute("CREATE TABLE IF NOT EXISTS Comic_Tag (" \
                 "comic_id INTEGER NOT NULL," \
                 "tag_id INTEGER NOT NULL," \
