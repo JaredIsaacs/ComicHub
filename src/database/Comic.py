@@ -7,7 +7,7 @@ from src.database.DatabaseRow import DatabaseRow
 class Comic(DatabaseRow):
     def __init__(self, cursor: Cursor, name: str, cover_image_url: str, status: str,
                 description: str, chapter_count: float, rating: float, review_count:int,
-                date_added: datetime, last_updated: datetime, year_published: int,  id : int | None):
+                date_added: datetime, last_updated: datetime, year_published: int,  id : int | None = None):
         super().__init__(cursor, id)
 
         self.name = name
@@ -23,26 +23,30 @@ class Comic(DatabaseRow):
 
     
     @staticmethod
-    def get(cursor: Cursor, id: int = None, name: str = None) -> Comic:
+    def get(cursor: Cursor, id: int = None, name: str = None) -> Comic | None:
         if id is None and name is None:
             raise Exception("Both name and id cannot be None!")
         
         if id:
             query = f"SELECT * FROM Comic WHERE id = ?"
-            response = cursor.execute(query, (id,))
+            cursor.execute(query, (id,))
         else:
-            query = f"SELECT * FROM Comic WHERE name = ?"
-            response = cursor.execute(query, (name,))
+            query = f"SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
+            "WHERE Comic.name = ? OR AltName.alt_name = ?"
+            cursor.execute(query, (name, name))
 
-        data = response.fetchone()
-        return Comic(cursor, data['name'], data['cover_image_url'], data['status'], data['description'], data['chapter_count'],
-                     data['rating'], data['review_count'], data['date_added'], data['last_updated'], data['year_published'],
-                     data['id'])
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        return Comic(cursor, row['name'], row['cover_image_url'], row['status'], row['description'], row['chapter_count'],
+                     row['rating'], row['review_count'], row['date_added'], row['last_updated'], row['year_published'],
+                     row['id'])
     
 
     @staticmethod
     def search(cursor: Cursor, query: str) -> list[Comic]:
-        sql_query = f"SELECT * FROM Comic, LEFT JOIN AltName ON Comic.id = AltName.comic_id" \
+        sql_query = f"SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
                     f"WHERE Comic.name LIKE ? OR AltName.alt_name LIKE ?"
         response = cursor.execute(sql_query, (f"%{query}%", f"%{query}%"))
 
@@ -78,21 +82,3 @@ class Comic(DatabaseRow):
     def delete(self):
         self.cursor.execute("DELETE FROM Comic where id = ?",
                             (self.id,))
-
-if __name__ == "__main__":
-    from src.globals import DB_NAME
-    import sqlite3
-
-    now = datetime.now(UTC)
-    now_iso = now.isoformat()
-
-    con = sqlite3.connect(DB_NAME)
-    con.row_factory = sqlite3.Row
-
-    cursor = con.cursor()
-
-    comic = Comic(cursor, "Dragonslayer's Class Regression", "https://meo.comick.pictures/Z8Bb6v-s.jpg", "ongoing", "Zeke Draker was the first of House Draker to fail his Awakening. And for that, he was cast out. Forced to survive in a brutal world, Zeke rose from disgrace and earned the name Phantom of the North. On a mission to stop the emperor from obtaining an ancient relic, Zeke was hunted and killed by imperial forces. But fate had other plans. Zeke awakens as a 12-year-old boy back in the Cradle, House Draker’s elite training ground. Given a second chance, Zeke’s determined to rewrite his fate.", 87.0, 7.9, 1440, now_iso, now_iso, 2024)
-    comic.create()
-
-    con.commit()
-    con.close()

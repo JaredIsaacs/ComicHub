@@ -3,7 +3,7 @@ from src.database.DatabaseRow import DatabaseRow
 from sqlite3 import Cursor
 
 class Chapter(DatabaseRow):
-    def __init__(self, cursor: Cursor, comic_source_id: int, chapter_number: float, id: int | None):
+    def __init__(self, cursor: Cursor, comic_source_id: int, chapter_number: float, id: int | None = None):
         super().__init__(cursor, id)
 
         self.id = id
@@ -12,22 +12,25 @@ class Chapter(DatabaseRow):
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int) -> 'Chapter':
-        cursor.execute('SELECT * FROM chapters WHERE id = ?', (id,))
-        row = cursor.fetchone()
+    def get(cursor: Cursor, id: int) -> Chapter | None:
+        cursor.execute('SELECT * FROM Chapters WHERE id = ?', (id,))
 
-        return Chapter(cursor, row[1], row[2], row[0])
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        return Chapter(cursor, row['comic_source_id'], row['chapter_number'], row['id'])
     
 
     def create(self):
-        self.cursor.execute('INSERT INTO chapters (comic_source_id, chapter_number) VALUES (?, ?)',
+        self.cursor.execute('INSERT INTO Chapters (comic_source_id, chapter_number) VALUES (?, ?)',
                              (self.comic_source_id, self.chapter_number))
         self.id = self.cursor.lastrowid
 
     
     def update(self):
-        self.cursor.execute('UPDATE chapters SET comic_source_id = ?, chapter_number = ? WHERE id = ?',
+        self.cursor.execute('UPDATE Chapters SET comic_source_id = ?, chapter_number = ? WHERE id = ?',
                              (self.comic_source_id, self.chapter_number, self.id))
 
     def delete(self):
-        self.cursor.execute('DELETE FROM chapters WHERE id = ?', (self.id,))
+        self.cursor.execute('DELETE FROM Chapters WHERE id = ?', (self.id,))

@@ -22,7 +22,10 @@ Table Review {
   id integer PK
   comic_id integer PK // Foreign Key
   user_name varchar
+  rating float
   review_text varchar
+  created_at varchar
+  updated_at varchar
 }
 
 Table Tag {
@@ -33,12 +36,14 @@ Table Tag {
 Table Genre {
   id integer PK
   name varchar
+  group varchar
 }
 
 Table Source {
   id integer PK
   name varchar
   base_url varchar
+  class_name varchar
 }
 
 Table Comment {
@@ -57,6 +62,7 @@ Table Chapter {
 Table Page {
   id integer PK
   chapter_id integer
+  page_order integer
   page_url varchar
 }
 
@@ -108,4 +114,4 @@ ref: Comment.chapter_id > Chapter.id
 ref: AltName.comic_id > Comic.id
 
 
-//POSITION({"Comic":{"x":-495.7098964345271,"y":-349.2999242203856,"w":230},"AltName":{"x":-780.7193513547005,"y":-381.2439281106581,"w":230},"Review":{"x":-780.3624047586873,"y":-553.3422111423316,"w":230},"Tag":{"x":100.57799815755016,"y":-148.61693112235866,"w":230},"Genre":{"x":102.3990457977319,"y":28.40603835381546,"w":230},"Source":{"x":102.22358348595588,"y":-338.28441768751213,"w":230},"Comment":{"x":380.9041363812446,"y":-706.4217406540996,"w":230},"Page":{"x":380.0032355533216,"y":-534.1062711758524,"w":230},"Comic_Tag":{"x":-194.81320455831883,"y":-147.6156551955275,"w":230},"Comic_Genre":{"x":-194.7708633295765,"y":23.212110493349712,"w":230},"Comic_Source":{"x":-193.57295939583474,"y":-513.0667210959791,"w":230},"Chapter":{"x":104.5286733615684,"y":-529.9799746366808,"w":230}})
+//POSITION({"Comic":{"x":-216.19998019828944,"y":1215.2299133225124,"w":230},"AltName":{"x":-532.3547398241797,"y":1104.1518041993368,"w":230},"Review":{"x":-533.4618876106695,"y":809.8677588603553,"w":230},"Tag":{"x":533.9999639968897,"y":1476.0499095421858,"w":230},"Genre":{"x":532.0457624715395,"y":1626.0050462749737,"w":230},"Source":{"x":536.7950135972683,"y":1273.157011813807,"w":230},"Chapter":{"x":537.9021613837581,"y":1120.0602792562574,"w":230},"Page":{"x":905.7481450670361,"y":1087.850085239056,"w":230},"Comic_Source":{"x":225.6811981918372,"y":1136.555900729829,"w":230},"Comic_Tag":{"x":228.36000756065312,"y":1479.8099405048604,"w":230},"Comic_Genre":{"x":224.9417715216311,"y":1619.9520254110753,"w":230},"Comment":{"x":905.1309844401926,"y":913.2592225186352,"w":230}})

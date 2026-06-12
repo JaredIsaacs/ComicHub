@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import importlib
 
 from requests import Session
 
@@ -10,6 +11,15 @@ class Scraper(ABC):
 
         self.name = "Base Scraper"
         self.session = Session()
+
+
+    @staticmethod
+    def get_scraper(class_name: str, base_url: str) -> Scraper:
+        module = importlib.import_module(f"src.scrapers.{class_name}")
+        scraper_class = getattr(module, class_name)
+
+        return scraper_class(base_url)
+
 
     @abstractmethod
     def get_all_comics(self) -> list[Comic]:

@@ -19,20 +19,23 @@ class ComicSource(DatabaseRow):
 
     
     @staticmethod
-    def get(cursor, id: int = None, comic_id: int = None, source_id: int = None) -> ComicSource:
+    def get(cursor, id: int = None, comic_id: int = None, source_id: int = None) -> ComicSource | None:
         if id is None and comic_id is None and source_id is None:
             raise Exception("Either id or both comic_id and source_id must be provided!")
         
         if id:
             query = "SELECT * FROM Comic_Source WHERE id = ?"
-            response = cursor.execute(query, (id,))
+            cursor.execute(query, (id,))
         else:
             query = "SELECT * FROM Comic_Source WHERE comic_id = ? AND source_id = ?"
-            response = cursor.execute(query, (comic_id, source_id))
+            cursor.execute(query, (comic_id, source_id))
 
-        data = response.fetchone()
-        return ComicSource(cursor, data['comic_id'], data['source_id'], data['chapter_count'], data['status'],
-                           data['slug'], data['date_added'], data['last_updated'], data['id'])
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        return ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'], row['status'],
+                           row['slug'], row['date_added'], row['last_updated'], row['id'])
     
     
     @staticmethod
@@ -73,22 +76,3 @@ class ComicSource(DatabaseRow):
     def delete(self):
         self.cursor.execute("DELETE FROM Comic_Source WHERE id = ?",
                             (self.id,))
-    
-
-if __name__ == "__main__":
-    import sqlite3
-    from src.globals import DB_NAME
-
-    now = datetime.now(UTC)
-    now_iso = now.isoformat()
-
-    con = sqlite3.connect(DB_NAME)
-    con.row_factory = sqlite3.Row
-
-    cursor = con.cursor()
-
-    commic_source = ComicSource(cursor, comic_id=2, source_id=1, chapter_count=87.0, status="Ongoing", slug="a-dragonslayers-peerless-regression-7b57f74d", date_added=now_iso, last_updated=now_iso)
-    commic_source.create()
-
-    con.commit()
-    con.close()

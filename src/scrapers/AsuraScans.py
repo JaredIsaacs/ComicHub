@@ -30,7 +30,7 @@ class AsuraScans(Scraper):
 
                     slug = url.split('/')[-1]
 
-                    comics.append(Comic(name, cover, slug))
+                    comics.append(Comic(self, name, cover, slug))
             except AttributeError:
                 break
             page += 1
@@ -41,19 +41,20 @@ class AsuraScans(Scraper):
         '''
         Class used to gather comic details that are important for the Scraper table.
         '''
-        response = self.session.get(f"{self.base_url}/comics/{slug}")
+        url = f"{self.base_url}/comics/{slug}"
+        response = self.session.get(url)
         soup = BeautifulSoup(response.content, features="lxml")
 
-        cover_image_tag = soup.find('img', class_=["w-full", "h-full", "object-cover"])
+        cover_image_tag = soup.find('img', id='cover-viewer-img')
 
         name = cover_image_tag.get("alt", "No Title")
-        cover_image_url = cover_image_tag.get("src", "No Cover Image")
+        cover_image_url = cover_image_tag.get("data-full-src", "No Cover Image")
         status = soup.find("span", class_=["text-[#A78BFA]"]).text.strip()
         chapter_count = soup.find('span', class_=[
             "from-[#48C855]", "to-[#C6FFAB]"
             ]).text.strip()
         
-        return Comic(name, cover_image_url, slug, chapter_count, status)
+        return Comic(self, name, cover_image_url, slug, chapter_count, status)
         
 
 
@@ -61,4 +62,5 @@ class AsuraScans(Scraper):
 
 if __name__ == "__main__":
     scraper = AsuraScans("asurascans.com")
-    scraper.get_comic("a-dragonslayers-peerless-regression-7b57f74d")
+    comic = scraper.get_comic("a-dragonslayers-peerless-regression-7b57f74d")
+    print('stop')

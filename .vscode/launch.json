@@ -8,7 +8,7 @@
       "name": "Python Debugger: Module",
       "type": "debugpy",
       "request": "launch",
-      "module": "src.database.ComicSource"
+      "module": "src.jobs.initialize_data",
     },
     {
       "name": "Python Debugger: Current File",

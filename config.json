@@ -1,0 +1,12 @@
+{
+    "db_name": "comichub.db",
+    "comick_endpoint": "https://api.comick.dev",
+    "first_run": false,
+    "scrapers": [
+        {
+            "name": "Asura Scans",
+            "base_url": "asurascans.com",
+            "class_name": "AsuraScans"
+        }
+    ]
+}

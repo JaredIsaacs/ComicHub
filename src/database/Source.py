@@ -4,56 +4,57 @@ from src.database.DatabaseRow import DatabaseRow
 
 class Source(DatabaseRow):
     def __init__(self, cursor: Cursor, name: str, base_url: str, 
-                 id: int | None):
+                 class_name: str, id: int | None = None):
         super().__init__(cursor, id)
 
         self.name = name
         self.base_url = base_url
+        self.class_name = class_name
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int = None, name: str = None):
+    def get(cursor: Cursor, id: int = None, name: str = None) -> Source | None:
         if id is None and name is None:
             raise Exception("Both name and id cannot be None!")
         
         if id:
             query = f"SELECT * FROM Source WHERE id = ?"
-            response = cursor.execute(query, (id,))
+            cursor.execute(query, (id,))
         else:
             query = f"SELECT * FROM Source WHERE name = ?"
-            response = cursor.execute(query, (name,))
+            cursor.execute(query, (name,))
 
-        data = response.fetchone()
-        return Source(cursor, data['name'], data['base_url'], data['id'])
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        return Source(cursor, row['name'], row['base_url'], row['class_name'], row['id'])
+    
+
+    @staticmethod
+    def get_all(cursor: Cursor):
+        query = f"SELECT * FROM Source"
+        response = cursor.execute(query)
+
+        sources = []
+        for s in response.fetchall():
+            source = Source(cursor, s['name'], s['base_url'], s['class_name'], s['id'])
+            sources.append(source)
+
+        return sources
 
 
     def create(self):
-        self.cursor.execute(f"INSERT INTO Source (name, base_url) VALUES (?, ?)",
-                            (self.name, self.base_url))
+        self.cursor.execute(f"INSERT INTO Source (name, base_url, class_name) VALUES (?, ?, ?)",
+                            (self.name, self.base_url, self.class_name))
         self.id = self.cursor.lastrowid
 
 
     def update(self):
-        self.cursor.execute("UPDATE Source SET name = ?, base_url = ? WHERE id = ?",
-                            (self.name, self.base_url, self.id))
+        self.cursor.execute("UPDATE Source SET name = ?, base_url = ?, class_name = ? WHERE id = ?",
+                            (self.name, self.base_url, self.self.class_name, self.id))
     
 
     def delete(self):
         self.cursor.execute("DELETE FROM Source WHERE id = ?",
                             (self.id,))
-
-
-if __name__ == "__main__":
-    import sqlite3
-    from src.globals import DB_NAME
-
-    con = sqlite3.connect(DB_NAME)
-    con.row_factory = sqlite3.Row
-
-    cursor = con.cursor()
-
-    source = Source(cursor, name="Asura Scans", base_url="asurascans.com")
-    source.create()
-
-    con.commit()
-    con.close()

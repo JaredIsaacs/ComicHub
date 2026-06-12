@@ -4,26 +4,47 @@ from src.database.DatabaseRow import DatabaseRow
 
 
 class Tag(DatabaseRow):
-    def __init__(self, cursor: Cursor, name: str, id : int | None):
+    def __init__(self, cursor: Cursor, name: str, id : int | None = None):
         super().__init__(cursor, id)
 
         self.name = name
 
 
+    def associate_comic(self, comic_id: int):
+        self.cursor.execute(
+                "INSERT INTO ComicTag (comic_id, tag_id) VALUES (?, ?)",
+                (comic_id, self.id))
+
+
     @staticmethod
-    def get(cursor: Cursor, id: int = None, name: str = None) -> Tag:
+    def get(cursor: Cursor, id: int = None, name: str = None) -> Tag | None:
         if id is None and name is None:
             raise Exception("Both name and id cannot be None!")
         
         if id:
             query = f"SELECT * FROM Tag WHERE id = ?"
-            response = cursor.execute(query, (id,))
+            cursor.execute(query, (id,))
         else:
             query = f"SELECT * FROM Tag WHERE name = ?"
-            response = cursor.execute(query, (name,))
+            cursor.execute(query, (name,))
 
-        data = response.fetchone()
-        return Tag(cursor, data['name'], data['id'])
+        row = cursor.fetchone()
+        if not row:
+            return None
+
+        return Tag(cursor, row['name'], row['id'])
+    
+
+    @staticmethod
+    def get_all(cursor: Cursor) -> list[Tag]:
+        query = "SELECT * FROM Tag"
+        response = cursor.execute(query)
+
+        tags = []
+        for data in response.fetchall():
+            tags.append(Tag(cursor, data['name'], data['id']))
+
+        return tags
     
 
     def create(self):
