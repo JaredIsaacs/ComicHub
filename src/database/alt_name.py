@@ -1,22 +1,25 @@
+"""Module used for accessing the alt_name table."""
+
 from sqlite3 import Cursor
 
 from src.database.database_row import DatabaseRow
 
 
 class AltName(DatabaseRow):
-    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, id: int | None = None):
-        super().__init__(cursor, id)
+    """Represents Alternative Names that a comic could potentially be called."""
+    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, _id: int | None = None):
+        super().__init__(cursor, _id)
 
         self.comic_id = comic_id
         self.alt_name = alt_name
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int = None, comic_id: int = None) -> AltName | None:
-        if id is None and comic_id is None:
+    def get(cursor: Cursor, alt_name_id: int = None, comic_id: int = None) -> AltName | None:
+        if alt_name_id is None and comic_id is None:
             raise Exception("Both comic_id and id cannot be None!")
 
-        if id:
+        if alt_name_id is not None:
             query = "SELECT * FROM AltName WHERE id = ?"
             cursor.execute(query, (id,))
         else:

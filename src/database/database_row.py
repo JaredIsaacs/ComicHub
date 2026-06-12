@@ -3,8 +3,8 @@ from sqlite3 import Cursor
 
 
 class DatabaseRow(ABC):
-    def __init__(self, cursor: Cursor, id: int | None = None):
-        self.id = id
+    def __init__(self, cursor: Cursor, _id: int | None = None):
+        self.id = _id
         self.cursor = cursor
 
 
