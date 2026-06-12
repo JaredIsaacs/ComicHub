@@ -9,13 +9,13 @@ from src.utilities import open_config, is_first_run, set_first_run
 from src.database.initialize_database import initialize_database
 from src.scrapers.Scraper import Scraper
 from src.scrapers import Comic as ScraperComic
-from src.database.Tag import Tag
-from src.database.Genre import Genre
-from src.database.Comic import Comic
-from src.database.ComicSource import ComicSource
-from src.database.Source import Source
-from src.database.AltName import AltName
-from src.database.Review import Review
+from src.database.tag import Tag
+from src.database.genre import Genre
+from src.database.comic import Comic
+from src.database.comic_source import ComicSource
+from src.database.source import Source
+from src.database.alt_name import AltName
+from src.database.review import Review
 
 '''
     Step 1: scrape all sources.

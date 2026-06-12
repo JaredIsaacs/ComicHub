@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from sqlite3 import Cursor
 
-from src.database.DatabaseRow import DatabaseRow
+from src.database.database_row import DatabaseRow
 
 class ComicSource(DatabaseRow):
     def __init__(self, cursor: Cursor, comic_id: int, source_id: int, 

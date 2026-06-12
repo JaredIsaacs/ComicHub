@@ -1,6 +1,6 @@
 from sqlite3 import Cursor
 
-from src.database.DatabaseRow import DatabaseRow
+from src.database.database_row import DatabaseRow
 
 class Source(DatabaseRow):
     def __init__(self, cursor: Cursor, name: str, base_url: str, 

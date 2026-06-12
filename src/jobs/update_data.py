@@ -9,8 +9,8 @@ import requests
 from src.utilities import open_config
 from src.jobs.initialize_data import gather_all_source_comics, create_comic
 from src.scrapers.Scraper import Scraper
-from src.database.Source import Source
-from src.database.ComicSource import ComicSource
+from src.database.source import Source
+from src.database.comic_source import ComicSource
 
 
 def _get_sources(cursor: sqlite3.Cursor) -> list[Source]:

@@ -1,6 +1,6 @@
 from sqlite3 import Cursor
 
-from src.database.DatabaseRow import DatabaseRow
+from src.database.database_row import DatabaseRow
 
 
 class Tag(DatabaseRow):
