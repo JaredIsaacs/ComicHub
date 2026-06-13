@@ -1,13 +1,13 @@
 """Module used for interacting with or accessing with the Comic table."""
 
 from sqlite3 import Cursor
-from datetime import datetime, UTC
+from datetime import datetime
 
 from src.database.database_row import DatabaseRow
 
 
 class Comic(DatabaseRow):
-    """Represents the actual Comic object from the database. 
+    """Represents the actual Comic object from the database.
     Which has data collected from either the Source or the Comick API.
 
     Special methods:
@@ -19,7 +19,7 @@ class Comic(DatabaseRow):
     """
     def __init__(self, cursor: Cursor, name: str, cover_image_url: str, status: str,
                 description: str, chapter_count: float, rating: float, review_count:int,
-                date_added: datetime, last_updated: datetime, year_published: int, 
+                date_added: datetime, last_updated: datetime, year_published: int,
                 obj_id : int | None = None):
         super().__init__(cursor, obj_id)
 
@@ -38,13 +38,13 @@ class Comic(DatabaseRow):
     @staticmethod
     def get(cursor: Cursor, obj_id: int = None, name: str = None) -> Comic | None:
         if obj_id is None and name is None:
-            raise Exception("Both name and id cannot be None!")
+            raise ValueError("Both name and id cannot be None!")
 
         if obj_id is not None:
-            query = f"SELECT * FROM Comic WHERE id = ?"
+            query = "SELECT * FROM Comic WHERE id = ?"
             cursor.execute(query, (obj_id,))
         else:
-            query = f"SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
+            query = "SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
             "WHERE Comic.name = ? OR AltName.alt_name = ?"
             cursor.execute(query, (name, name))
 
@@ -59,8 +59,16 @@ class Comic(DatabaseRow):
 
     @staticmethod
     def search(cursor: Cursor, query: str) -> list[Comic]:
-        sql_query = f"SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
-                    f"WHERE Comic.name LIKE ? OR AltName.alt_name LIKE ?"
+        '''
+        Accepts:
+            * cursor: Cursor
+            * query: str
+
+        Returns:
+            Comics that have names or altnames like the query provided.
+        '''
+        sql_query = "SELECT * FROM Comic LEFT JOIN AltName ON Comic.id = AltName.comic_id " \
+                    "WHERE Comic.name LIKE ? OR AltName.alt_name LIKE ?"
         response = cursor.execute(sql_query, (f"%{query}%", f"%{query}%"))
 
         comics = []
@@ -90,8 +98,8 @@ class Comic(DatabaseRow):
                             " description = ?," \
                             "chapter_count = ?, rating = ?, review_count = ?, date_added = ?, " \
                             "last_updated = ?, year_published = ?",
-                            (self.name, self.cover_image_url, self.status, self.description, 
-                            self.chapter_count, self.rating, self.review_count, self.date_added, 
+                            (self.name, self.cover_image_url, self.status, self.description,
+                            self.chapter_count, self.rating, self.review_count, self.date_added,
                             self.last_updated, self.year_published))
 
 
