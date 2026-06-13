@@ -43,7 +43,7 @@ class AltName(DatabaseRow):
 
     def update(self):
         self.cursor.execute("UPDATE AltName SET comic_id = ?, alt_name = ?",
-                             (self.comic_id, self.alt_name))
+                            (self.comic_id, self.alt_name))
 
 
     def delete(self):

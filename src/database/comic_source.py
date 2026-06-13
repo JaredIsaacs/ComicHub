@@ -33,9 +33,10 @@ class ComicSource(DatabaseRow):
 
 
     @staticmethod
-    def get(cursor, obj_id: int = None, comic_id: int = None, source_id: int = None) -> ComicSource | None:
+    def get(cursor, obj_id: int = None, comic_id: int = None,
+            source_id: int = None) -> ComicSource | None:
         if obj_id is None and comic_id is None and source_id is None:
-            raise Exception("Either id or both comic_id and source_id must be provided!")
+            raise ValueError("Either id or both comic_id and source_id must be provided!")
 
         if obj_id:
             query = "SELECT * FROM Comic_Source WHERE id = ?"
@@ -48,35 +49,51 @@ class ComicSource(DatabaseRow):
         if not row:
             return None
 
-        return ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'], 
+        return ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'],
                             row['status'], row['slug'], row['date_added'], row['last_updated'],
                             row['id'])
 
 
     @staticmethod
     def get_all_by_comic_id(cursor, comic_id: int) -> list[ComicSource]:
+        '''
+        Accepts:
+            * cursor: Cursor
+            * comic_id: int
+
+        Returns:
+            A list of all Comic_Sources associated to a comic_id
+        '''
         query = "SELECT * FROM Comic_Source WHERE comic_id = ?"
         response = cursor.execute(query, (comic_id,))
         data = response.fetchall()
-        return [ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'], 
-                            row['status'], row['slug'], row['date_added'], row['last_updated'], 
+        return [ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'],
+                            row['status'], row['slug'], row['date_added'], row['last_updated'],
                             row['id']) for row in data]
 
 
     @staticmethod
     def get_all_by_source_id(cursor, source_id: int) -> list[ComicSource]:
+        '''
+        Accepts:
+            * cursor: Cursor
+            * source_id: int
+
+        Returns:
+            A list of all Comic_Sources associated to a source_id
+        '''
         query = "SELECT * FROM Comic_Source WHERE source_id = ?"
         response = cursor.execute(query, (source_id,))
         data = response.fetchall()
-        return [ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'], 
-                            row['status'], row['slug'], row['date_added'], row['last_updated'], 
+        return [ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'],
+                            row['status'], row['slug'], row['date_added'], row['last_updated'],
                             row['id']) for row in data]
 
 
     def create(self):
         self.cursor.execute(
-            "INSERT INTO Comic_Source (comic_id, source_id, chapter_count, status, slug, date_added," \
-            " last_updated) " \
+            "INSERT INTO Comic_Source (comic_id, source_id, chapter_count, status," \
+            " slug, date_added, last_updated) " \
             "VALUES (?, ?, ?, ?, ?, ?, ?)",
             (self.comic_id, self.source_id, self.chapter_count, self.status, self.slug,
             self.date_added, self.last_updated))

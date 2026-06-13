@@ -13,28 +13,38 @@ class Tag(DatabaseRow):
         Returns all tags available in the db. Might be handy when setting up filtering
         on the frontend.
     """
-    def __init__(self, cursor: Cursor, name: str, id : int | None = None):
-        super().__init__(cursor, id)
+    def __init__(self, cursor: Cursor, name: str, obj_id : int | None = None):
+        super().__init__(cursor, obj_id)
 
         self.name = name
 
 
     def associate_comic(self, comic_id: int):
+        """
+        Links a tag to a comic.
+        
+        Accepts:
+            * A comic id.
+
+        Returns: 
+            * Nothing.
+        """
+
         self.cursor.execute(
                 "INSERT INTO ComicTag (comic_id, tag_id) VALUES (?, ?)",
-                (comic_id, self.id))
+                (comic_id, self.obj_id))
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int = None, name: str = None) -> Tag | None:
-        if id is None and name is None:
-            raise Exception("Both name and id cannot be None!")
+    def get(cursor: Cursor, obj_id: int = None, name: str = None) -> Tag | None:
+        if obj_id is None and name is None:
+            raise ValueError("Both name and id cannot be None!")
 
-        if id:
-            query = f"SELECT * FROM Tag WHERE id = ?"
-            cursor.execute(query, (id,))
+        if obj_id is not None:
+            query = "SELECT * FROM Tag WHERE id = ?"
+            cursor.execute(query, (obj_id,))
         else:
-            query = f"SELECT * FROM Tag WHERE name = ?"
+            query = "SELECT * FROM Tag WHERE name = ?"
             cursor.execute(query, (name,))
 
         row = cursor.fetchone()
@@ -46,6 +56,16 @@ class Tag(DatabaseRow):
 
     @staticmethod
     def get_all(cursor: Cursor) -> list[Tag]:
+        """
+        Grabs all tags that exists in the database
+
+        Accepts:
+            * cursor: Cursor
+
+        Returns:
+            * a list of tags (list[Tag])
+        """
+
         query = "SELECT * FROM Tag"
         response = cursor.execute(query)
 
@@ -60,16 +80,16 @@ class Tag(DatabaseRow):
         self.cursor.execute(
                 "INSERT INTO Tag (name) VALUES (?)",
                 (self.name,))
-        self.id = self.cursor.lastrowid
+        self.obj_id = self.cursor.lastrowid
 
 
     def update(self):
         self.cursor.execute(
                 "UPDATE Tag SET name = ? WHERE id = ?",
-                (self.name, self.id))
+                (self.name, self.obj_id))
 
 
     def delete(self):
         self.cursor.execute(
                 "DELETE FROM Tag WHERE id = ?",
-                (self.id,))
+                (self.obj_id,))

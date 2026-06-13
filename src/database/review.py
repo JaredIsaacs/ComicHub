@@ -21,7 +21,7 @@ class Review(DatabaseRow):
 
     @staticmethod
     def get(cursor: Cursor, obj_id: int) -> Review | None:
-        query = f"SELECT * FROM Review WHERE id = ?"
+        query = "SELECT * FROM Review WHERE id = ?"
         cursor.execute(query, (obj_id,))
 
         row = cursor.fetchone()
@@ -36,7 +36,7 @@ class Review(DatabaseRow):
         self.cursor.execute(
                 "INSERT INTO Review (comic_id, user_name, rating, review_text, " \
                 "created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (self.comic_id, self.user_name, self.rating, 
+                (self.comic_id, self.user_name, self.rating,
                 self.review_text, self.created_at, self.updated_at)
             )
         self.obj_id = self.cursor.lastrowid
@@ -46,7 +46,7 @@ class Review(DatabaseRow):
         self.cursor.execute(
                 "UPDATE Review SET comic_id = ?, user_name = ?, rating = ?, " \
                 "review_text = ?, created_at = ?, updated_at = ? WHERE id = ?",
-                (self.comic_id, self.user_name, self.rating, 
+                (self.comic_id, self.user_name, self.rating,
                 self.review_text, self.created_at, self.updated_at, self.obj_id)
             )
 

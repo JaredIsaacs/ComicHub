@@ -6,12 +6,12 @@ from src.database.database_row import DatabaseRow
 
 class Source(DatabaseRow):
     """Represents a Genre record from the database.
-    
+
     Special methods:
         get_all(cursor: Cursor) -> list[Source]
         Method used to gather all sources. Especially handy when running specific jobs.
     """
-    def __init__(self, cursor: Cursor, name: str, base_url: str, 
+    def __init__(self, cursor: Cursor, name: str, base_url: str,
                 class_name: str, obj_id: int | None = None):
         super().__init__(cursor, obj_id)
 
@@ -23,13 +23,13 @@ class Source(DatabaseRow):
     @staticmethod
     def get(cursor: Cursor, obj_id: int = None, name: str = None) -> Source | None:
         if obj_id is None and name is None:
-            raise Exception("Both name and id cannot be None!")
-        
+            raise ValueError("Both name and id cannot be None!")
+
         if obj_id is not None:
-            query = f"SELECT * FROM Source WHERE id = ?"
+            query = "SELECT * FROM Source WHERE id = ?"
             cursor.execute(query, (obj_id,))
         else:
-            query = f"SELECT * FROM Source WHERE name = ?"
+            query = "SELECT * FROM Source WHERE name = ?"
             cursor.execute(query, (name,))
 
         row = cursor.fetchone()
@@ -37,11 +37,20 @@ class Source(DatabaseRow):
             return None
 
         return Source(cursor, row['name'], row['base_url'], row['class_name'], row['id'])
-    
+
 
     @staticmethod
     def get_all(cursor: Cursor) -> list[Source]:
-        query = f"SELECT * FROM Source"
+        """
+        Returns all sources in the database.
+
+        Accepts:
+            * cursor: Cursor
+
+        Returns:
+            * A list of sources (list[Source])
+        """
+        query = "SELECT * FROM Source"
         response = cursor.execute(query)
 
         sources = []
@@ -53,15 +62,15 @@ class Source(DatabaseRow):
 
 
     def create(self):
-        self.cursor.execute(f"INSERT INTO Source (name, base_url, class_name) VALUES (?, ?, ?)",
+        self.cursor.execute("INSERT INTO Source (name, base_url, class_name) VALUES (?, ?, ?)",
                             (self.name, self.base_url, self.class_name))
         self.obj_id = self.cursor.lastrowid
 
 
     def update(self):
         self.cursor.execute("UPDATE Source SET name = ?, base_url = ?, class_name = ? WHERE id = ?",
-                            (self.name, self.base_url, self.self.class_name, self.obj_id))
-    
+                            (self.name, self.base_url, self.class_name, self.obj_id))
+
 
     def delete(self):
         self.cursor.execute("DELETE FROM Source WHERE id = ?",

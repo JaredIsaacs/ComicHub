@@ -1,12 +1,12 @@
 """Module used for interacting with or accessing with the Genre table."""
 
-from src.database.database_row import DatabaseRow
-
 from sqlite3 import Cursor
+
+from src.database.database_row import DatabaseRow
 
 class Genre(DatabaseRow):
     """Represents a Genre record from the database.
-    
+
     Special methods:
         associate_comic(self, comic_id: int):
         Is used to link a comic to a genre using a comic_id.
@@ -22,6 +22,15 @@ class Genre(DatabaseRow):
 
 
     def associate_comic(self, comic_id: int):
+        """
+        Associates this specific genre to a comic.
+
+        Accepts:
+            * A comic ID
+
+        Returns:
+            * Nothing
+        """
         self.cursor.execute(
                 "INSERT INTO Comic_Genre (comic_id, genre_id) VALUES (?, ?)",
                 (comic_id, self.obj_id))
@@ -42,12 +51,12 @@ class Genre(DatabaseRow):
             return None
 
         return Genre(cursor, row['name'], row['genre_group'], row['id'])
-    
+
 
     def create(self):
         if self.obj_id:
             create_query = 'INSERT INTO Genre (id, name, genre_group) VALUES (?, ?, ?)'
-            self.cursor.execute(create_query, (self.id, self.name, self.genre_group))
+            self.cursor.execute(create_query, (self.obj_id, self.name, self.genre_group))
         else:
             create_query = 'INSERT INTO Genre (name, genre_group) VALUES (?, ?)'
             self.cursor.execute(create_query, (self.name, self.genre_group))
@@ -55,9 +64,9 @@ class Genre(DatabaseRow):
             self.obj_id = self.cursor.lastrowid
 
     def update(self):
-        self.cursor.execute('UPDATE Genre SET name = ?, genre_group = ? WHERE id = ?', 
-                            (self.name, self.genre_group, self.id))
+        self.cursor.execute('UPDATE Genre SET name = ?, genre_group = ? WHERE id = ?',
+                            (self.name, self.genre_group, self.obj_id))
 
-    
+
     def delete(self):
         self.cursor.execute('DELETE FROM Genre WHERE id = ?', (self.obj_id,))

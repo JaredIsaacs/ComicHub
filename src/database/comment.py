@@ -1,12 +1,12 @@
 """Module used for interacting with or accessing with the Comment table."""
 
-from src.database.database_row import DatabaseRow
-
 from sqlite3 import Cursor
+
+from src.database.database_row import DatabaseRow
 
 class Comment(DatabaseRow):
     """Represents the and individual Comment row from the database."""
-    def __init__(self, cursor: Cursor, chapter_id: int, user_name: str, comment: str, 
+    def __init__(self, cursor: Cursor, chapter_id: int, user_name: str, comment: str,
                 obj_id: int | None = None):
         super().__init__(cursor, obj_id)
 
@@ -18,9 +18,9 @@ class Comment(DatabaseRow):
     @staticmethod
     def get(cursor: Cursor, obj_id: int) -> Comment | None:
         if not obj_id:
-            raise Exception('ID must be provided')
+            raise ValueError('id must be provided')
 
-        query = f"SELECT * FROM Comment WHERE id = ?"
+        query = "SELECT * FROM Comment WHERE id = ?"
         cursor.execute(query, (obj_id,))
 
         row = cursor.fetchone()
