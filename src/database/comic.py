@@ -19,7 +19,8 @@ class Comic(DatabaseRow):
     """
     def __init__(self, cursor: Cursor, name: str, cover_image_url: str, status: str,
                 description: str, chapter_count: float, rating: float, review_count:int,
-                date_added: datetime, last_updated: datetime, year_published: int,  obj_id : int | None = None):
+                date_added: datetime, last_updated: datetime, year_published: int, 
+                obj_id : int | None = None):
         super().__init__(cursor, obj_id)
 
         self.name = name
@@ -52,8 +53,8 @@ class Comic(DatabaseRow):
             return None
 
         return Comic(cursor, row['name'], row['cover_image_url'], row['status'], row['description'],
-                     row['chapter_count'], row['rating'], row['review_count'], row['date_added'],
-                     row['last_updated'], row['year_published'], row['id'])
+                    row['chapter_count'], row['rating'], row['review_count'], row['date_added'],
+                    row['last_updated'], row['year_published'], row['id'])
 
 
     @staticmethod
@@ -75,8 +76,8 @@ class Comic(DatabaseRow):
     def create(self):
         self.cursor.execute(
                 "INSERT INTO Comic (name, cover_image_url, status, description," \
-                "chapter_count, rating, review_count, date_added, last_updated, year_published) VALUES " \
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "chapter_count, rating, review_count, date_added, last_updated, year_published) " \
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (self.name, self.cover_image_url, self.status, self.description,
                 self.chapter_count, self.rating, self.review_count, self.date_added,
                 self.last_updated, self.year_published)
@@ -85,11 +86,13 @@ class Comic(DatabaseRow):
 
 
     def update(self):
-        self.cursor.execute("UPDATE Comic SET name = ?, cover_image_url = ?, status = ?, description = ?," \
-                            "chapter_count = ?, rating = ?, review_count = ?, date_added = ?, last_updated = ?," \
-                            "year_published = ?",
-                            (self.name, self.cover_image_url, self.status, self.description, self.chapter_count,
-                            self.rating, self.review_count, self.date_added, self.last_updated, self.year_published))
+        self.cursor.execute("UPDATE Comic SET name = ?, cover_image_url = ?, status = ?," \
+                            " description = ?," \
+                            "chapter_count = ?, rating = ?, review_count = ?, date_added = ?, " \
+                            "last_updated = ?, year_published = ?",
+                            (self.name, self.cover_image_url, self.status, self.description, 
+                            self.chapter_count, self.rating, self.review_count, self.date_added, 
+                            self.last_updated, self.year_published))
 
 
     def delete(self):

@@ -1,12 +1,13 @@
 """Module used for interacting with or accessing with the Chapter table."""
 
-from src.database.database_row import DatabaseRow
-
 from sqlite3 import Cursor
+
+from src.database.database_row import DatabaseRow
 
 class Chapter(DatabaseRow):
     """Represents Chapters that a comic source has."""
-    def __init__(self, cursor: Cursor, comic_source_id: int, chapter_number: float, obj_id: int | None = None):
+    def __init__(self, cursor: Cursor, comic_source_id: int, 
+                chapter_number: float, obj_id: int | None = None):
         super().__init__(cursor, obj_id)
 
         self.comic_source_id = comic_source_id
