@@ -1,4 +1,4 @@
-"""Module used for accessing the alt_name table."""
+"""Module used for interacting with or accessing the Alt_Name table."""
 
 from sqlite3 import Cursor
 
@@ -7,19 +7,19 @@ from src.database.database_row import DatabaseRow
 
 class AltName(DatabaseRow):
     """Represents Alternative Names that a comic could potentially be called."""
-    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, _id: int | None = None):
-        super().__init__(cursor, _id)
+    def __init__(self, cursor: Cursor, comic_id: int, alt_name: str, row_id: int | None = None):
+        super().__init__(cursor, row_id)
 
         self.comic_id = comic_id
         self.alt_name = alt_name
 
 
     @staticmethod
-    def get(cursor: Cursor, alt_name_id: int = None, comic_id: int = None) -> AltName | None:
-        if alt_name_id is None and comic_id is None:
-            raise Exception("Both comic_id and id cannot be None!")
+    def get(cursor: Cursor, obj_id: int = None, comic_id: int = None) -> AltName | None:
+        if obj_id is None and comic_id is None:
+            raise ValueError("Both comic_id and id cannot be None!")
 
-        if alt_name_id is not None:
+        if obj_id is not None:
             query = "SELECT * FROM AltName WHERE id = ?"
             cursor.execute(query, (id,))
         else:
@@ -38,7 +38,7 @@ class AltName(DatabaseRow):
                 "INSERT INTO AltName (comic_id, alt_name) VALUES (?, ?)",
                 (self.comic_id, self.alt_name)
             )
-        self.id = self.cursor.lastrowid
+        self.obj_id = self.cursor.lastrowid
 
 
     def update(self):
@@ -47,4 +47,4 @@ class AltName(DatabaseRow):
 
 
     def delete(self):
-        self.cursor.execute("DELETE FROM AltName WHERE id = ?", (self.id,))
+        self.cursor.execute("DELETE FROM AltName WHERE id = ?", (self.obj_id,))

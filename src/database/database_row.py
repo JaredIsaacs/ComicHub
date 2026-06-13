@@ -3,13 +3,13 @@ from sqlite3 import Cursor
 
 
 class DatabaseRow(ABC):
-    def __init__(self, cursor: Cursor, _id: int | None = None):
-        self.id = _id
+    def __init__(self, cursor: Cursor, obj_id: int | None = None):
+        self.obj_id = obj_id
         self.cursor = cursor
 
 
     @staticmethod
-    def get(cursor: Cursor, id: int | None):
+    def get(cursor: Cursor, obj_id: int | None):
         pass
 
 

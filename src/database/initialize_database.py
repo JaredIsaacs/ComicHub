@@ -1,3 +1,8 @@
+"""Module used to initialize the database.
+
+There's like one function here, and it contains all the sql tables.
+"""
+
 import sqlite3
 
 from src.utilities import open_config
