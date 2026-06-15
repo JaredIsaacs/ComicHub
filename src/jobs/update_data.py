@@ -9,7 +9,7 @@ Ideally this should
 import sqlite3
 from datetime import datetime, UTC
 
-from src.utilities import open_config
+from src.utilities import open_config, get_db_objs
 from src.jobs.initialize_data import gather_all_source_comics, create_comic
 from src.scrapers.scraper import Scraper
 from src.database.source import Source
@@ -60,17 +60,16 @@ def update_data():
     """Entry function used to update all data"""
 
     config = open_config()
+    cursor, con = get_db_objs()
 
     timeout = config['timeout']
-
-    con = sqlite3.connect(config['db_name'])
-    con.row_factory = sqlite3.Row
-    cursor = con.cursor()
-    cursor.execute("PRAGMA foreign_keys = ON;")
 
     sources = _get_sources(cursor, timeout)
     for source in sources:
         _get_new_comics(source, cursor, timeout)
+
+    con.execute()
+    con.close()
 
 
 if __name__ == "__main__":

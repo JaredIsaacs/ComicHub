@@ -15,7 +15,7 @@ from datetime import datetime, UTC
 from dotenv import load_dotenv
 import requests
 
-from src.utilities import open_config
+from src.utilities import open_config, get_db_objs
 from src.database.initialize_database import initialize_database
 from src.scrapers.scraper import Scraper
 from src.scrapers import comic as ScraperComic
@@ -205,13 +205,9 @@ def initialize_data():
     """Function used to initialize a brand new database."""
 
     config = open_config()
+    cursor, con = get_db_objs()
 
     timeout = config['timeout']
-
-    con = sqlite3.connect(config['db_name'])
-    con.row_factory = sqlite3.Row
-    cursor = con.cursor()
-    cursor.execute("PRAGMA foreign_keys = ON;")
 
     initialize_database(cursor)
     _populate_tags(cursor, timeout)
