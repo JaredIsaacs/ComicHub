@@ -3,7 +3,7 @@ import importlib
 
 from requests import Session
 
-from src.scrapers.Comic import Comic
+from src.scrapers.comic import Comic
 
 class Scraper(ABC):
     def __init__(self, base_url):
