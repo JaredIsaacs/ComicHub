@@ -73,7 +73,8 @@ def _populate_sources(cursor: sqlite3.Cursor):
             print(f"Source {s['name']} already exists in the database.")
 
 
-def create_comic(source_comic: ScraperComic, time: str, cursor: sqlite3.Cursor, timeout: int):
+def create_comic(source_comic: ScraperComic, time: str,
+                cursor: sqlite3.Cursor, timeout: int) -> Comic | None:
     '''Creates a comic provided a ScraperComic object.
     
     Requires:
@@ -133,7 +134,7 @@ def create_comic(source_comic: ScraperComic, time: str, cursor: sqlite3.Cursor, 
     if not comic_request.ok:
         print(f"Failed to fetch comic {source_comic.name} from Comick.dev: " \
             f"{comic_request.status_code} - {comic_request.text}")
-        return
+        return None
 
     comic_data = comic_request.json()[0]
 
