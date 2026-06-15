@@ -1,9 +1,11 @@
 """Abstract class all Scraper classes should be built on."""
 
 from abc import ABC, abstractmethod
+from pkgutil import walk_packages
 import importlib
 
 from requests import Session
+import src.scrapers
 
 from src.scrapers.comic import Comic
 
@@ -13,11 +15,37 @@ class Scraper(ABC):
     If this is being used to scrape, something went majorly wrong.
     """
 
+    _class_registry = {}
+
     def __init__(self, base_url):
         self.base_url = "https://" + base_url
 
         self.name = "Base Scraper"
         self.session = Session()
+
+    
+    def __init_subclass__(cls):
+        super().__init_subclass__()
+
+        Scraper._class_registry[cls.__name__] = cls
+
+    
+    @staticmethod
+    def initialize_registry():
+        """Static method used to initialize scrapers into the base classes registry.
+        
+        Call this method before get_scraper()
+        """
+
+        if len(Scraper._class_registry) > 0:
+            print("Registry already populated. Skipping scraper initialization.")
+            return
+
+        for _, module_name, _ in walk_packages(
+            src.scrapers.__path__,
+            src.scrapers.__name__ + "."
+        ):
+            importlib.import_module(module_name)
 
 
     @staticmethod
@@ -34,10 +62,10 @@ class Scraper(ABC):
         Returns:
             * Scraper - the requested for class based on the Scraper class."""
 
-        module = importlib.import_module(f"src.scrapers.{class_name}")
-        scraper_class = getattr(module, class_name)
+        if class_name not in Scraper._class_registry.keys():
+            raise ValueError(f"Class name, {class_name}, not in class registry.")
 
-        return scraper_class(base_url)
+        return Scraper._class_registry[class_name](base_url)
 
 
     @abstractmethod

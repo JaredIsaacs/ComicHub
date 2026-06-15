@@ -59,6 +59,8 @@ def _get_new_comics(source: Source, cursor: sqlite3.Cursor, timeout: int):
 def update_data():
     """Entry function used to update all data"""
 
+    Scraper.initialize_registry()
+
     config = open_config()
     cursor, con = get_db_objs()
 
