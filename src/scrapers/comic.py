@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.scrapers.Scraper import Scraper
+    from src.scrapers.scraper import Scraper
 
 @dataclass
 class Comic():

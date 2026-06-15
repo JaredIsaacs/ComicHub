@@ -3,8 +3,8 @@ import time
 from requests import get
 from bs4 import BeautifulSoup
 
-from src.scrapers.Scraper import Scraper
-from src.scrapers.Comic import Comic
+from src.scrapers.scraper import Scraper
+from src.scrapers.comic import Comic
 
 class MangaBall(Scraper):
     def __init__(self, base_url):

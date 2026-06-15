@@ -2,7 +2,7 @@
 
 from bs4 import BeautifulSoup
 
-from src.scrapers.Scraper import Scraper
+from src.scrapers.scraper import Scraper
 from src.scrapers.comic import Comic
 
 class AsuraScans(Scraper):
