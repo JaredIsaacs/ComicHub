@@ -76,7 +76,7 @@ def _populate_sources(cursor: sqlite3.Cursor):
 def create_comic(source_comic: ScraperComic, time: str,
                 cursor: sqlite3.Cursor, timeout: int) -> Comic | None:
     '''Creates a comic provided a ScraperComic object.
-    
+
     Requires:
         * source_comic: ScraperComic - object to add :).
         * time: str - time str that determins the initial added/updated date.
@@ -168,9 +168,9 @@ def create_comic(source_comic: ScraperComic, time: str,
 def gather_all_source_comics(source: Source, cursor: sqlite3.Cursor, timeout: int):
     '''Gathers all comics associated to a source, and creates them if there is a new one.
 
-    Essentially the function that associates source to comics. 
+    Essentially the function that associates source to comics.
     Might be a better idea to rename it to that.
-    
+
     Requires:
         * source: Source - the source object used to gather comics.
         * cursor: sqlite3.Cursor - how we connect to the db.
@@ -193,9 +193,8 @@ def gather_all_source_comics(source: Source, cursor: sqlite3.Cursor, timeout: in
             print(f"Comic {c.name} already exists in the database (found {comic.name}). " \
                 "Skipping creation.")
             continue
-        else:
-            comic = create_comic(c, now, cursor, timeout)
 
+        comic = create_comic(c, now, cursor, timeout)
         source = Source.get(cursor, name=c.scraper.name)
         ComicSource(cursor, comic.obj_id, source.obj_id, c.chapter_count, c.status,
                     c.slug, now, now).create()
