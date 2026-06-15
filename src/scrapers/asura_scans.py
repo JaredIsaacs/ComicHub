@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 
 from src.scrapers.Scraper import Scraper
-from src.scrapers.Comic import Comic
+from src.scrapers.comic import Comic
 
 class AsuraScans(Scraper):
     """Represents a Scraper object designed specifically to scrape the Asura Scans website."""
