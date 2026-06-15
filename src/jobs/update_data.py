@@ -30,7 +30,7 @@ def _get_sources(cursor: sqlite3.Cursor) -> list[Source]:
     return sources
 
 
-def _get_new_comics(source: Source, cursor: sqlite3.Cursor):
+def _get_new_comics(source: Source, cursor: sqlite3.Cursor, timeout: int):
     scraper = Scraper.get_scraper(source.class_name, source.base_url)
     now = datetime.now(UTC)
 
@@ -45,7 +45,7 @@ def _get_new_comics(source: Source, cursor: sqlite3.Cursor):
                 print(f"New comic, {c.name}, detected! Gathering details and creating entry.")
 
                 c = c.get_details()
-                comic = create_comic(c, now, cursor)
+                comic = create_comic(c, now, cursor, timeout)
 
                 source = Source.get(cursor, name=c.scraper.name)
                 ComicSource(cursor, comic.id, source.id, c.chapter_count, c.status, c.slug, now, now).create()
@@ -54,6 +54,8 @@ def _get_new_comics(source: Source, cursor: sqlite3.Cursor):
 def update_data():
     config = open_config()
 
+    timeout = config['timeout']
+
     con = sqlite3.connect(config['db_name'])
     con.row_factory = sqlite3.Row
     cursor = con.cursor()
@@ -61,7 +63,7 @@ def update_data():
 
     sources = _get_sources(cursor)
     for source in sources:
-        _get_new_comics(source, cursor)
+        _get_new_comics(source, cursor, timeout)
 
 
 if __name__ == "__main__":

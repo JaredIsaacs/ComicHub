@@ -2,6 +2,7 @@
     "db_name": "comichub.db",
     "comick_endpoint": "https://api.comick.dev",
     "first_run": false,
+    "timeout": 15,
     "scrapers": [
         {
             "name": "Asura Scans",
