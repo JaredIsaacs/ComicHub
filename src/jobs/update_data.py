@@ -1,10 +1,13 @@
-import sqlite3
-import os
-import logging
-from datetime import datetime, UTC
+"""Module to update existing comics in database
 
-from dotenv import load_dotenv
-import requests
+Ideally this should
+    1. find new comics.
+    2. update statistics for existing comics.
+    3. check for new chapters.
+"""
+
+import sqlite3
+from datetime import datetime, UTC
 
 from src.utilities import open_config
 from src.jobs.initialize_data import gather_all_source_comics, create_comic
@@ -13,7 +16,7 @@ from src.database.source import Source
 from src.database.comic_source import ComicSource
 
 
-def _get_sources(cursor: sqlite3.Cursor) -> list[Source]:
+def _get_sources(cursor: sqlite3.Cursor, timeout) -> list[Source]:
     config_sources = open_config()['scrapers']
     sources = Source.get_all(cursor)
 
@@ -21,10 +24,11 @@ def _get_sources(cursor: sqlite3.Cursor) -> list[Source]:
     for s in config_sources:
         if s['name'] not in existing_source_names:
             print(f"New scraper, {s['name']} detected. Adding comic information.")
-            source = Source(cursor, name=s['name'], base_url=s['base_url'])
+            source = Source(cursor, name=s['name'], base_url=s['base_url'],
+                            class_name=s["class_name"])
             source.create()
 
-            gather_all_source_comics(source, cursor)
+            gather_all_source_comics(source, cursor, timeout)
             sources.append(source)
 
     return sources
@@ -48,10 +52,13 @@ def _get_new_comics(source: Source, cursor: sqlite3.Cursor, timeout: int):
                 comic = create_comic(c, now, cursor, timeout)
 
                 source = Source.get(cursor, name=c.scraper.name)
-                ComicSource(cursor, comic.id, source.id, c.chapter_count, c.status, c.slug, now, now).create()
+                ComicSource(cursor, comic.obj_id, source.obj_id, c.chapter_count,
+                            c.status, c.slug, now, now).create()
 
 
 def update_data():
+    """Entry function used to update all data"""
+
     config = open_config()
 
     timeout = config['timeout']
@@ -61,7 +68,7 @@ def update_data():
     cursor = con.cursor()
     cursor.execute("PRAGMA foreign_keys = ON;")
 
-    sources = _get_sources(cursor)
+    sources = _get_sources(cursor, timeout)
     for source in sources:
         _get_new_comics(source, cursor, timeout)
 
