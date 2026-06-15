@@ -15,7 +15,7 @@ from datetime import datetime, UTC
 from dotenv import load_dotenv
 import requests
 
-from src.utilities import open_config, get_db_objs
+from src.utilities import open_config, get_db_objs, get_api_headers
 from src.database.initialize_database import initialize_database
 from src.scrapers.scraper import Scraper
 from src.scrapers import comic as ScraperComic
@@ -93,11 +93,11 @@ def create_comic(source_comic: ScraperComic, time: str,
             alt_name = AltName(cursor, comic_id, t['title'])
             alt_name.create()
 
-    def _create_reviews(cursor: sqlite3.Cursor, comick_slug: str, comic_id: int, headers: any):
+    def _create_reviews(cursor: sqlite3.Cursor, comick_slug: str, comic_id: int):
         config = open_config()
         comick_endpoint = config['comick_endpoint']
         reviews_request = requests.get(f"{comick_endpoint}/comic/{comick_slug}",
-                                        timeout=timeout, headers=headers)
+                                        timeout=timeout, headers=get_api_headers())
         if not reviews_request.ok:
             print(f"Failed to fetch reviews for {comick_slug} " \
                 "from Comick.dev: {reviews_request.status_code} - {reviews_request.text}")
@@ -129,19 +129,9 @@ def create_comic(source_comic: ScraperComic, time: str,
         4: "Hiatus"
     }
 
-    api_headers = {
-            "X-CSRF-Token": "",
-            "Referer": f"{comick_endpoint}/",
-            "Origin": comick_endpoint,
-            "X-Requested-With": "XMLHttpRequest",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " \
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
-
     comic_request = requests.get(f"{comick_endpoint}/v1.0/search" \
                                 f"?page=1&limit=15&showall=false&q={source_comic.name}&t=false",
-                                timeout=timeout, headers=api_headers)
+                                timeout=timeout, headers=get_api_headers())
     if not comic_request.ok:
         print(f"Failed to fetch comic {source_comic.name} from Comick.dev: " \
             f"{comic_request.status_code} - {comic_request.text}")
@@ -166,7 +156,7 @@ def create_comic(source_comic: ScraperComic, time: str,
     comic.create()
 
     _create_alt_titles(cursor, comic_data, comic.obj_id)
-    _create_reviews(cursor, comic_data['slug'], comic.obj_id, api_headers)
+    _create_reviews(cursor, comic_data['slug'], comic.obj_id)
 
     genres = _gather_genres(comic_request.json()[0])
     for g in genres:

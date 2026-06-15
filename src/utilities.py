@@ -63,3 +63,23 @@ def get_db_objs() -> tuple[sqlite3.Cursor, sqlite3.Connection]:
     cursor.execute("PRAGMA foreign_keys = ON;")
 
     return cursor, con
+
+
+def get_api_headers():
+    """Function that returns api headers important for scraping.
+    
+    This allows us to get around basic bot detection.
+    """
+
+    config = open_config()
+    comick_endpoint = config['comick_endpoint']
+
+    return {
+            "X-CSRF-Token": "",
+            "Referer": f"{comick_endpoint}/",
+            "Origin": comick_endpoint,
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " \
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
