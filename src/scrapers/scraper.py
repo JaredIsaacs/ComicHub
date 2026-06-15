@@ -1,3 +1,5 @@
+"""Abstract class all Scraper classes should be built on."""
+
 from abc import ABC, abstractmethod
 import importlib
 
@@ -6,6 +8,11 @@ from requests import Session
 from src.scrapers.comic import Comic
 
 class Scraper(ABC):
+    """Base class for all scrapers.
+    
+    If this is being used to scrape, something went majorly wrong.
+    """
+
     def __init__(self, base_url):
         self.base_url = "https://" + base_url
 

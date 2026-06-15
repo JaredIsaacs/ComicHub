@@ -1,12 +1,22 @@
+"""Manga Ball scraping class used for scraping mangaball.com"""
+
 import time
 
-from requests import get
 from bs4 import BeautifulSoup
 
 from src.scrapers.scraper import Scraper
 from src.scrapers.comic import Comic
 
 class MangaBall(Scraper):
+    """Scraper class used to scrape mangaball.com
+    
+    This is temporarily being put on the back burner. Instead were focusing on scraping 
+    the actually scanlation groups that mangaball and mangafire actually get their comics
+    from themselves.
+
+    Might revisit this at a later date.
+    """
+
     def __init__(self, base_url):
         super().__init__(base_url)
 
@@ -16,7 +26,8 @@ class MangaBall(Scraper):
             "Origin": self.base_url,
             "X-Requested-With": "XMLHttpRequest",
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " \
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
         self._init_csrf()
 
@@ -60,12 +71,13 @@ class MangaBall(Scraper):
 
             data = response.json()
 
+        return comics
+
 
     def get_comic(self, slug: str) -> Comic:
         pass
 
 
-''' TESTING '''
 if __name__ == "__main__":
     scraper = MangaBall("mangaball.net")
     scraper.get_all_comics()
