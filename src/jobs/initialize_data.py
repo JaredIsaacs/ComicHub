@@ -57,7 +57,7 @@ def _populate_genres(cursor: sqlite3.Cursor, timeout: int):
 
     genres = response.json()
     for g in genres:
-        genre = Genre(cursor, name=g['name'], genre_group=g['group'], obj_id=['id'])
+        genre = Genre(cursor, name=g['name'], genre_group=g['group'], obj_id=g['id'])
         genre.create()
 
 
