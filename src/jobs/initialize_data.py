@@ -17,8 +17,8 @@ import requests
 
 from src.utilities import open_config
 from src.database.initialize_database import initialize_database
-from src.scrapers.Scraper import Scraper
-from src.scrapers import Comic as ScraperComic
+from src.scrapers.scraper import Scraper
+from src.scrapers import comic as ScraperComic
 from src.database.tag import Tag
 from src.database.genre import Genre
 from src.database.comic import Comic
