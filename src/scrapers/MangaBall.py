@@ -61,7 +61,7 @@ class MangaBall(Scraper):
             data = response.json()
 
 
-    def get_comic(self, title: str) -> Comic:
+    def get_comic(self, slug: str) -> Comic:
         pass
 
 

@@ -1,9 +1,13 @@
+"""Scraper class for scraping comics for asurascans.com"""
+
 from bs4 import BeautifulSoup
 
 from src.scrapers.Scraper import Scraper
 from src.scrapers.Comic import Comic
 
 class AsuraScans(Scraper):
+    """Represents a Scraper object designed specifically to scrape the Asura Scans website."""
+
     def __init__(self, base_url):
         super().__init__(base_url)
         self.name = "Asura Scans"
@@ -22,7 +26,8 @@ class AsuraScans(Scraper):
 
             series_grid = soup.find(id="series-grid")
             try:
-                links = series_grid.find_all('a', class_=['block', 'relative', 'aspect-[3/4]', 'overflow-hidden'])
+                links = series_grid.find_all('a', class_=['block', 'relative',
+                                                        'aspect-[3/4]', 'overflow-hidden'])
                 for l in links:
                     name = l.img.get('alt', 'No Title')
                     cover = l.img.get('src', 'No Cover Image')
@@ -34,9 +39,9 @@ class AsuraScans(Scraper):
             except AttributeError:
                 break
             page += 1
-        
+
         return comics
-    
+
     def get_comic(self, slug: str) -> Comic:
         '''
         Class used to gather comic details that are important for the Scraper table.
@@ -53,11 +58,8 @@ class AsuraScans(Scraper):
         chapter_count = soup.find('span', class_=[
             "from-[#48C855]", "to-[#C6FFAB]"
             ]).text.strip()
-        
+
         return Comic(self, name, cover_image_url, slug, chapter_count, status)
-        
-
-
 
 
 if __name__ == "__main__":

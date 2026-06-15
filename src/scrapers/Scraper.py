@@ -26,5 +26,5 @@ class Scraper(ABC):
         pass
     
     @abstractmethod
-    def get_comic(self, title: str) -> Comic:
+    def get_comic(self, slug: str) -> Comic:
         pass
