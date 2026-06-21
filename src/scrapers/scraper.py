@@ -30,14 +30,14 @@ class Scraper(ABC):
         Scraper._class_registry[cls.__name__] = cls
 
 
-    @staticmethod
-    def initialize_registry():
+    @classmethod
+    def initialize_registry(cls):
         """Static method used to initialize scrapers into the base classes registry.
 
         Call this method before get_scraper()
         """
 
-        if len(Scraper._class_registry) > 0:
+        if len(cls._class_registry) > 0:
             print("Registry already populated. Skipping scraper initialization.")
             return
 
