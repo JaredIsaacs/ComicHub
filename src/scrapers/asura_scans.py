@@ -48,6 +48,10 @@ class AsuraScans(Scraper):
         '''
         url = f"{self.base_url}/comics/{slug}"
         response = self.session.get(url)
+
+        if response.status_code == 404:
+            return None
+
         soup = BeautifulSoup(response.content, features="lxml")
 
         cover_image_tag = soup.find('img', id='cover-viewer-img')

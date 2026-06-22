@@ -3,6 +3,7 @@
 from sqlite3 import Cursor
 
 from src.database.database_row import DatabaseRow
+from src.database.source import Source
 
 class ComicSource(DatabaseRow):
     """Represents the connection between a Comic and a Source.
@@ -88,6 +89,14 @@ class ComicSource(DatabaseRow):
         return [ComicSource(cursor, row['comic_id'], row['source_id'], row['chapter_count'],
                             row['status'], row['slug'], row['date_added'], row['last_updated'],
                             row['id']) for row in data]
+    
+
+    def get_source(self) -> Source:
+        self.cursor.execute("SELECT * FROM Source where id = ?", (self.source_id,))
+        source = self.cursor.fetchone()
+
+        return Source(self.cursor, source['name'], source['base_url'], source['class_name'],
+                      source['id'])
 
 
     def create(self):

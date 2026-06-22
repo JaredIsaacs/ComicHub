@@ -3,7 +3,9 @@
 from sqlite3 import Cursor
 from datetime import datetime
 
+from src.database.comic_source import ComicSource
 from src.database.database_row import DatabaseRow
+from src.database.review import Review
 
 
 class Comic(DatabaseRow):
@@ -58,6 +60,29 @@ class Comic(DatabaseRow):
 
 
     @staticmethod
+    def get_all(cursor: Cursor) -> list[Comic]:
+        '''
+        Accepts:
+            * cursor: Cursor
+        
+        Returns:
+            All comics in the comics table.
+        '''
+
+        sql_query = "SELECT * FROM Comic"
+        response = cursor.execute(sql_query)
+
+        comics = []
+        for data in response.fetchall():
+            comics.append(Comic(cursor, data['name'], data['cover_image_url'], data['status'],
+                                data['description'], data['chapter_count'], data['rating'],
+                                data['review_count'], data['date_added'], data['last_updated'],
+                                data['year_published'], data['id']))
+        
+        return comics
+
+
+    @staticmethod
     def search(cursor: Cursor, query: str) -> list[Comic]:
         '''
         Accepts:
@@ -79,6 +104,49 @@ class Comic(DatabaseRow):
                                 data['year_published'], data['id']))
 
         return comics
+    
+
+    def get_reviews(self) -> list[Review]:
+        """Gets all reviews associated with this Comic object.
+        
+        Accepts:
+            * Just itself :)
+        Returns:
+            A list of reviews.
+        """
+        self.cursor.execute(
+                "SELECT * FROM Review WHERE Review.comic_id = ?",
+                (self.obj_id,)
+            )
+
+        reviews = []
+        for review in self.cursor.fetchall():
+            reviews.append(Review(self.cursor, self.obj_id, review['user_name'], review['rating'],
+                                  review['review_text'], review['created_at'], review['updated_at'],
+                                  review['id']))
+            
+        return reviews
+    
+
+    def get_comic_sources(self) -> list[ComicSource]:
+        """Gets all comicsource objects associated to this comic in the database.
+        
+        Accepts:
+            * Itself.
+        Returns:
+            A list of comicsource objects.
+        """
+        self.cursor.execute("SELECT * FROM Comic_Source WHERE Comic_Source.comic_id = ?", 
+                            (self.obj_id, ))
+        
+        comic_sources = []
+        for comic_source in self.cursor.fetchall():
+            comic_sources.append(ComicSource(self.cursor, self.obj_id, comic_source['source_id'], 
+                                             comic_source['chapter_count'], comic_source['status'],
+                                             comic_source['slug'], comic_source['date_added'],
+                                             comic_source['last_updated'], comic_source['id']))
+            
+        return comic_sources
 
 
     def create(self):
@@ -97,10 +165,10 @@ class Comic(DatabaseRow):
         self.cursor.execute("UPDATE Comic SET name = ?, cover_image_url = ?, status = ?," \
                             " description = ?," \
                             "chapter_count = ?, rating = ?, review_count = ?, date_added = ?, " \
-                            "last_updated = ?, year_published = ?",
+                            "last_updated = ?, year_published = ? WHERE id = ?",
                             (self.name, self.cover_image_url, self.status, self.description,
                             self.chapter_count, self.rating, self.review_count, self.date_added,
-                            self.last_updated, self.year_published))
+                            self.last_updated, self.year_published, self.obj_id))
 
 
     def delete(self):

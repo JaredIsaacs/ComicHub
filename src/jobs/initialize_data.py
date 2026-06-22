@@ -101,6 +101,7 @@ def create_comic(source_comic: ScraperComic, time: str,
         if not reviews_request.ok:
             print(f"Failed to fetch reviews for {comick_slug} " \
                 "from Comick.dev: {reviews_request.status_code} - {reviews_request.text}")
+            return 
 
         reviews_data = reviews_request.json()
         for r in reviews_data['comic']['reviews']:

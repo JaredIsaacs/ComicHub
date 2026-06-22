@@ -1,7 +1,19 @@
 """Utiltities module to be used globaly by other modules."""
 
 import json
+import pathlib
 import sqlite3
+
+def get_base_directory() -> pathlib.Path:
+    """Gets the base directory for the application.
+    
+    Requires:
+        * Nothing
+    Returns:
+        * Base directory :)
+    """
+    return pathlib.Path(__file__).parent.resolve()
+
 
 def open_config():
     """Opens the config file located in the base of this repository.

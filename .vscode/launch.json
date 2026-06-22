@@ -8,7 +8,7 @@
       "name": "Python Debugger: Module",
       "type": "debugpy",
       "request": "launch",
-      "module": "src.jobs.initialize_data",
+      "module": "src.jobs.start_garage",
     },
     {
       "name": "Python Debugger: Current File",

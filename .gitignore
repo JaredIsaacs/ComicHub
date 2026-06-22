@@ -2,3 +2,5 @@
 *.db
 
 .env
+garage_data/*
+garage_meta/*
